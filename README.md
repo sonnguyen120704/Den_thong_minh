@@ -33,7 +33,6 @@ Hệ thống được thiết kế theo mô hình kiến trúc 3 tầng chuẩn 
 
 ![Sơ đồ kiến trúc tổng thể](docs/images/so_do_khoi.png)
 
-
 ### Chi tiết hoạt động các tầng:
 1. **Tầng Phần cứng (Hardware)**: Kết nối các cảm biến vật lý trực tiếp với các chân IO tương ứng trên BeagleBone Black.
 2. **Tầng Drivers (Kernel Space)**: Các Module Kernel `.ko` tự viết xử lý cấu hình phần cứng ở mức thấp, quản lý tài nguyên hệ thống và cung cấp giao diện giao tiếp thông qua các file thiết bị ảo trong thư mục `/dev` hoặc thuộc tính `/sys/class`.

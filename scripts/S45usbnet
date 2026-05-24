@@ -1,0 +1,18 @@
+#!/bin/sh
+# Script tự động cấu hình USB Ethernet khi khởi động
+
+case "$1" in
+    start)
+        echo "Cấu hình USB Ethernet (usb0)..."
+        ifconfig usb0 192.168.7.2 netmask 255.255.255.0 up
+        echo "USB Ethernet: 192.168.7.2 [OK]"
+        ;;
+    stop)
+        ifconfig usb0 down
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+exit 0

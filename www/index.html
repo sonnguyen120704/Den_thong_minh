@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Lamp Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#f5f0e8;color:#2d2a24;min-height:100vh;padding:16px}
+        .container{max-width:680px;margin:0 auto}
+
+        /* Header */
+        .header{background:#fff;border-radius:16px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        .header-left{display:flex;align-items:center;gap:8px}
+        .header-left span.icon{font-size:18px}
+        .header-title{font-size:15px;font-weight:700}
+        .header-right{display:flex;align-items:center;gap:10px;font-size:12px;color:#888}
+        .badge{background:#e8f5e9;color:#2e7d32;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+
+        /* Quick Stats Row */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+        .stat-box{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        .stat-label{font-size:10px;color:#999;display:flex;align-items:center;gap:4px;margin-bottom:4px}
+        .stat-label .ico{font-size:12px}
+        .stat-value{font-size:22px;font-weight:700}
+        .stat-value small{font-size:12px;font-weight:500;color:#999}
+        .stat-sub{font-size:11px;color:#6b8e5e;font-weight:600;margin-top:2px}
+
+        /* Cards Grid */
+        .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+        .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        .card-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#888;letter-spacing:.5px;margin-bottom:14px}
+
+        /* System Status */
+        .status-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px}
+        .status-row .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+        .dot-green{background:#4caf50}
+        .status-row .label{color:#555;display:flex;align-items:center}
+        .status-row .val{font-weight:600;color:#2d2a24}
+        .val-true{color:#4caf50}
+        .val-badge{background:#e8f5e9;color:#2e7d32;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
+        .decision-box{margin-top:12px;padding:10px 12px;background:#fafaf5;border-radius:10px;font-size:12px}
+        .decision-box .main{font-weight:700;margin-bottom:2px}
+        .decision-box .sub{color:#888;font-size:11px}
+
+        /* Manual Control */
+        .override-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+        .override-row span{font-size:13px;font-weight:500}
+        .toggle{position:relative;width:44px;height:24px;cursor:pointer}
+        .toggle input{opacity:0;width:0;height:0}
+        .toggle .slider{position:absolute;top:0;left:0;right:0;bottom:0;background:#ccc;border-radius:24px;transition:.3s}
+        .toggle .slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+        .toggle input:checked+.slider{background:#4caf50}
+        .toggle input:checked+.slider:before{transform:translateX(20px)}
+        .bright-control{margin:14px 0}
+        .bright-label{display:flex;justify-content:space-between;font-size:12px;color:#999;margin-bottom:6px}
+        .bright-label span:last-child{font-weight:600;color:#2d2a24}
+        input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:#e0ddd5;outline:none}
+        input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#4caf50;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+        .btn-apply{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #ddd;border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;color:#555;margin-top:8px;transition:.2s}
+        .btn-apply:hover{background:#f0f0f0}
+        .control-note{margin-top:14px;font-size:11px;color:#999;line-height:1.5}
+        .control-note .info-icon{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid #ccc;text-align:center;line-height:14px;font-size:9px;margin-right:4px}
+
+        /* Energy Stats */
+        .energy-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;text-align:center}
+        .e-stat .e-label{font-size:10px;color:#999;margin-bottom:2px}
+        .e-stat .e-val{font-size:22px;font-weight:700;color:#2d2a24}
+        .e-stat .e-unit{font-size:11px;color:#999}
+        .chart-wrap{margin-top:8px}
+        .chart-title{font-size:11px;color:#999;margin-bottom:8px}
+        .chart-bars{display:flex;align-items:flex-end;height:80px;gap:2px}
+        .cbar{flex:1;background:#d4c9a8;border-radius:2px 2px 0 0;min-height:2px;transition:height .4s;position:relative;cursor:pointer}
+        .cbar.active{background:#5a7247}
+        .cbar:hover{opacity:.8}
+        .chart-xlabels{display:flex;justify-content:space-between;margin-top:4px;font-size:8px;color:#bbb}
+
+        /* Activity Log */
+        .log-list{max-height:220px;overflow-y:auto;font-size:12px;line-height:1.8}
+        .log-list::-webkit-scrollbar{width:4px}
+        .log-list::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+        .log-entry{color:#555;border-bottom:1px solid #f5f0e8;padding:3px 0}
+        .log-entry .time{color:#888;font-family:monospace;font-size:11px}
+        .log-entry .ev-on{color:#2e7d32;font-weight:600}
+        .log-entry .ev-off{color:#c62828;font-weight:600}
+
+        /* Responsive */
+        @media(max-width:600px){
+            .stats-row{grid-template-columns:repeat(2,1fr)}
+            .cards{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <span class="icon">✨</span>
+            <span class="header-title">Smart Lamp — Đèn cửa trước</span>
+        </div>
+        <div class="header-right">
+            <span>Cập nhật: <b id="hdr-time">--:--:--</b></span>
+            <span class="badge" id="hdr-badge">Đang kết nối...</span>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-row">
+        <div class="stat-box">
+            <div class="stat-label"><span class="ico">☀</span> Ánh sáng</div>
+            <div class="stat-value"><span id="q-lux">--</span> <small>lux</small></div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label"><span class="ico">👁</span> Chuyển động</div>
+            <div class="stat-value" id="q-motion" style="font-size:16px;margin-top:4px">--</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label"><span class="ico">⏰</span> Thời gian thực</div>
+            <div class="stat-value" id="q-time" style="font-size:20px">--:--</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label"><span class="ico">💡</span> Độ sáng đèn</div>
+            <div class="stat-value"><span id="q-bright">--</span> <small>%</small></div>
+        </div>
+    </div>
+
+    <!-- Main Cards Row 1 -->
+    <div class="cards">
+        <!-- System Status -->
+        <div class="card">
+            <div class="card-title">Trạng thái hệ thống</div>
+            <div class="status-row">
+                <span class="label">Chế độ</span>
+                <span class="val-badge" id="s-mode">Tự động</span>
+            </div>
+            <div class="status-row">
+                <span class="label"><span class="dot dot-green"></span>is_dark</span>
+                <span class="val" id="s-dark">--</span>
+            </div>
+            <div class="status-row">
+                <span class="label"><span class="dot dot-green"></span>is_night (RTC)</span>
+                <span class="val" id="s-night">--</span>
+            </div>
+            <div class="status-row">
+                <span class="label"><span class="dot dot-green"></span>lux < ngưỡng</span>
+                <span class="val" id="s-luxcheck">--</span>
+            </div>
+            <div class="status-row">
+                <span class="label"><span class="dot dot-green"></span>motion_confirmed</span>
+                <span class="val" id="s-motionc">--</span>
+            </div>
+            <div class="status-row">
+                <span class="label"><span class="dot dot-green"></span>Timeout còn lại</span>
+                <span class="val" id="s-timeout">--</span>
+            </div>
+            <div class="decision-box">
+                <div class="main" id="s-decision">Quyết định: --</div>
+                <div class="sub" id="s-reason">Lý do: --</div>
+            </div>
+        </div>
+
+        <!-- Manual Control -->
+        <div class="card">
+            <div class="card-title">Điều khiển thủ công</div>
+            <div class="override-row">
+                <span>Override thủ công</span>
+                <label class="toggle">
+                    <input type="checkbox" id="mode-switch" onchange="toggleMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="bright-control" id="slider-area" style="opacity:.5">
+                <div class="bright-label">
+                    <span>Độ sáng mục tiêu</span>
+                    <span id="slider-val">80%</span>
+                </div>
+                <input type="range" id="bright-slider" min="0" max="100" value="80" oninput="onSliderInput(this.value)" disabled>
+            </div>
+            <button class="btn-apply" id="btn-apply" onclick="applyBrightness()" disabled>Áp dụng ↗</button>
+            <div class="control-note">
+                <span class="info-icon">ⓘ</span> Bật override để điều chỉnh độ sáng thủ công.<br>
+                Hệ thống tự động trở về chế độ tự động sau <b>1 giờ</b> nếu không có thao tác.
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Cards Row 2 -->
+    <div class="cards">
+        <!-- Energy Stats -->
+        <div class="card">
+            <div class="card-title">Thống kê năng lượng hôm nay</div>
+            <div class="energy-stats">
+                <div class="e-stat">
+                    <div class="e-label">Số lần bật</div>
+                    <div class="e-val" id="e-count">0</div>
+                    <div class="e-unit">lần</div>
+                </div>
+                <div class="e-stat">
+                    <div class="e-label">Giờ sáng</div>
+                    <div class="e-val" id="e-hours">0</div>
+                    <div class="e-unit">h</div>
+                </div>
+                <div class="e-stat">
+                    <div class="e-label">Sáng đầy đủ</div>
+                    <div class="e-val" id="e-full">0</div>
+                    <div class="e-unit">h</div>
+                </div>
+            </div>
+            <div class="chart-wrap">
+                <div class="chart-title">Số giây đèn sáng theo giờ (hôm nay)</div>
+                <div class="chart-bars" id="chart-bars"></div>
+                <div class="chart-xlabels" id="chart-labels"></div>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="card">
+            <div class="card-title">Nhật ký hoạt động</div>
+            <div class="log-list" id="log-list">
+                <div class="log-entry" style="color:#bbb;text-align:center">Đang tải...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isManual = false;
+    let uiBrightness = 80;
+    const logEntries = [];
+    let prevMotion = -1, prevBright = -1, prevDark = -1;
+
+    // Init chart
+    (function(){
+        const bars = document.getElementById('chart-bars');
+        const labels = document.getElementById('chart-labels');
+        for(let i=0;i<24;i++){
+            const b = document.createElement('div');
+            b.className='cbar';b.id='bar-'+i;b.style.height='2px';
+            b.title=i+'h: 0s';
+            bars.appendChild(b);
+        }
+        // Show every 2 hours
+        for(let i=0;i<24;i+=2){
+            const s=document.createElement('span');s.textContent=i+'h';labels.appendChild(s);
+        }
+    })();
+
+    function addLog(time, msg, type){
+        logEntries.unshift({time,msg,type});
+        if(logEntries.length>50) logEntries.pop();
+        renderLog();
+    }
+
+    function renderLog(){
+        const el = document.getElementById('log-list');
+        el.innerHTML = logEntries.map(e=>{
+            const cls = e.type==='on'?'ev-on':e.type==='off'?'ev-off':'';
+            return `<div class="log-entry"><span class="time">[${e.time}]</span> <span class="${cls}">${e.msg}</span></div>`;
+        }).join('');
+    }
+
+    function fmtTimeout(ticks){
+        // 250 ticks = 5s timeout, each tick = 20ms
+        const remaining = Math.max(0, 250 - ticks);
+        const sec = (remaining * 0.02).toFixed(1);
+        return sec + 's';
+    }
+
+    // Fetch status
+    setInterval(async()=>{
+        try{
+            const res = await fetch('/api/status');
+            const d = await res.json();
+
+            // Header
+            let timeStr = '--:--';
+            if(d.time && d.time!=='Error' && d.time!=='N/A'){
+                const p=d.time.split(' ');
+                if(p.length===2) timeStr=p[1].substring(0,5);
+                document.getElementById('hdr-time').textContent=p.length===2?p[1]:d.time;
+            }
+            document.getElementById('hdr-badge').textContent='Đang hoạt động';
+            document.getElementById('hdr-badge').style.background='#e8f5e9';
+
+            // Quick stats
+            document.getElementById('q-lux').textContent=d.lux;
+            document.getElementById('q-motion').textContent=d.human_present?'Có người':'Không';
+            document.getElementById('q-motion').style.color=d.human_present?'#2e7d32':'#888';
+            document.getElementById('q-time').textContent=timeStr;
+            document.getElementById('q-bright').textContent=d.brightness;
+
+            // System status
+            const modeEl=document.getElementById('s-mode');
+            if(d.manual){modeEl.textContent='Thủ công';modeEl.style.background='#fff3e0';modeEl.style.color='#e65100';}
+            else{modeEl.textContent='Tự động';modeEl.style.background='#e8f5e9';modeEl.style.color='#2e7d32';}
+
+            const hour = d.time&&d.time.split(' ').length===2?d.time.split(' ')[1].split(':')[0]:'--';
+
+            document.getElementById('s-dark').innerHTML=d.is_dark?'<span class="val-true">TRUE</span>':'FALSE';
+            document.getElementById('s-night').innerHTML=d.is_night?`<span class="val-true">TRUE</span> — ${hour}h`:`FALSE — ${hour}h`;
+            document.getElementById('s-luxcheck').innerHTML=(d.lux<200)?`<span class="val-true">TRUE</span> — ${d.lux} < 200`:`FALSE — ${d.lux} ≥ 200`;
+            document.getElementById('s-motionc').innerHTML=d.human_present?`<span class="val-true">TRUE</span>`:'FALSE';
+            document.getElementById('s-timeout').textContent=d.human_present?fmtTimeout(0):fmtTimeout(d.no_motion_ticks);
+
+            // Decision
+            const decEl=document.getElementById('s-decision');
+            const reaEl=document.getElementById('s-reason');
+            if(d.manual){
+                decEl.textContent='Quyết định: Thủ công '+d.brightness+'%';
+                reaEl.textContent='Lý do: Override thủ công bật';
+            }else if(!d.is_dark){
+                decEl.textContent='Quyết định: Tắt đèn 0%';
+                reaEl.textContent='Lý do: Trời sáng hoặc ngoài giờ tối';
+            }else if(d.human_present){
+                decEl.textContent='Quyết định: Sáng đầy 100%';
+                reaEl.textContent='Lý do: Ban đêm + tối + có người';
+            }else{
+                decEl.textContent='Quyết định: Nền an ninh 20%';
+                reaEl.textContent='Lý do: Ban đêm + tối + không có người';
+            }
+
+            // Sync manual toggle
+            if(d.manual!==(document.getElementById('mode-switch').checked?1:0)){
+                isManual=d.manual===1;
+                document.getElementById('mode-switch').checked=isManual;
+                updateManualUI();
+            }
+            if(!isManual){
+                uiBrightness=d.brightness;
+            }
+
+            // Logging
+            const t=d.time||'--';
+            const shortT=t.split(' ').length===2?t.split(' ')[1]:t;
+            if(prevDark!==-1 && d.is_dark!==prevDark){
+                addLog(shortT, d.is_dark?'CHE DO DEM — lux='+d.lux+' < 200':'CHE DO NGAY — lux='+d.lux, 'info');
+            }
+            if(prevMotion!==-1 && d.human_present!==prevMotion){
+                if(d.human_present) addLog(shortT,'DEN BAT — co nguoi','on');
+                else addLog(shortT,'DEN GIAM — het nguoi','off');
+            }
+            if(prevBright!==-1 && d.brightness===0 && prevBright>0){
+                addLog(shortT,'DEN TAT — ban ngay','off');
+            }
+            prevMotion=d.human_present;prevBright=d.brightness;prevDark=d.is_dark;
+
+        }catch(e){
+            document.getElementById('hdr-badge').textContent='Mất kết nối';
+            document.getElementById('hdr-badge').style.background='#ffebee';
+            document.getElementById('hdr-badge').style.color='#c62828';
+        }
+    },500);
+
+    // Fetch energy
+    setInterval(async()=>{
+        try{
+            const res=await fetch('/api/energy');
+            const d=await res.json();
+            document.getElementById('e-count').textContent=d.on_off_count;
+            let total=0,max=1;
+            for(let i=0;i<24;i++){total+=d.hours[i];if(d.hours[i]>max)max=d.hours[i];}
+            const hrs=(total/3600).toFixed(1);
+            document.getElementById('e-hours').textContent=hrs;
+            document.getElementById('e-full').textContent=hrs;
+
+            for(let i=0;i<24;i++){
+                const bar=document.getElementById('bar-'+i);
+                if(d.hours[i]>0){
+                    const h=Math.max((d.hours[i]/max)*70,4);
+                    bar.style.height=h+'px';bar.className='cbar active';
+                }else{
+                    bar.style.height='2px';bar.className='cbar';
+                }
+                bar.title=i+'h: '+d.hours[i]+'s';
+            }
+        }catch(e){}
+    },2000);
+
+    function updateManualUI(){
+        document.getElementById('slider-area').style.opacity=isManual?'1':'.5';
+        document.getElementById('bright-slider').disabled=!isManual;
+        document.getElementById('btn-apply').disabled=!isManual;
+    }
+
+    function toggleMode(){
+        isManual=document.getElementById('mode-switch').checked;
+        updateManualUI();
+        if(isManual) {
+            const v=document.getElementById('bright-slider').value;
+            fetch(`/api/control?m=1&b=${v}`);
+        } else {
+            fetch(`/api/control?m=0&b=0`);
+        }
+    }
+
+    function onSliderInput(v){
+        document.getElementById('slider-val').textContent=v+'%';
+    }
+
+    function applyBrightness(){
+        if(!isManual)return;
+        const v=document.getElementById('bright-slider').value;
+        uiBrightness=parseInt(v);
+        fetch(`/api/control?m=1&b=${v}`);
+        const t=document.getElementById('hdr-time').textContent;
+        addLog(t,'MANUAL SET — '+v+'%','on');
+    }
+</script>
+</body>
+</html>

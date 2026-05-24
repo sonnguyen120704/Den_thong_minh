@@ -1,4 +1,5 @@
-CROSS_COMPILE ?= /home/son/buildroot2/output/host/bin/arm-buildroot-linux-gnueabihf-
+BUILDROOT_DIR ?= /home/son/buildroot2
+CROSS_COMPILE ?= $(BUILDROOT_DIR)/output/host/bin/arm-buildroot-linux-gnueabihf-
 CC = $(CROSS_COMPILE)gcc
 CFLAGS = -Wall -Wextra -pthread
 LDFLAGS = -pthread

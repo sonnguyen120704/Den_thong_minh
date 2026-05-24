@@ -1,0 +1,56 @@
+#!/bin/sh
+# Script tự động chạy hệ thống Đèn Thông Minh khi khởi động
+
+case "$1" in
+  start)
+    printf "Waiting 15 seconds for system power and I2C bus to stabilize...\n"
+    # Delay 15 giây để chờ điện áp ổn định và boot xong hoàn toàn
+    sleep 15
+    
+    printf "Starting Smart Lamp System...\n"
+    
+    # Bật điện trở kéo xuống nội (Internal Pull-down) cho chân P9_12 (GPIO1_28) để triệt nhiễu PIR
+    devmem 0x44E10878 32 0x27
+    
+    # 1. Tự động nạp toàn bộ Kernel Drivers
+    insmod /root/pwm_driver.ko
+    insmod /root/pir_driver.ko
+    insmod /root/bh1750_driver.ko
+    insmod /root/ds3231_driver.ko
+    insmod /root/sh1106_spi_driver.ko
+    
+    # Đợi 2 giây để Kernel tạo xong hết các device nodes /dev/...
+    sleep 2
+    
+    # 2. Di chuyển tới /root và chạy chương trình chính ở chế độ chạy ngầm (&)
+    cd /root
+    ./smart_lamp > /var/log/smart_lamp.log 2>&1 &
+    
+    printf "Smart Lamp System started successfully!\n"
+    ;;
+  stop)
+    printf "Stopping Smart Lamp System...\n"
+    
+    # 1. Tắt chương trình chính
+    killall smart_lamp
+    
+    # 2. Gỡ các driver ra khỏi Kernel
+    rmmod sh1106_spi_driver
+    rmmod ds3231_driver
+    rmmod bh1750_driver
+    rmmod pir_driver
+    rmmod pwm_driver
+    
+    printf "Smart Lamp System stopped.\n"
+    ;;
+  restart|reload)
+    "$0" stop
+    sleep 1
+    "$0" start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit 0

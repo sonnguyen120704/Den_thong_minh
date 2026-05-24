@@ -44,9 +44,10 @@ Hệ thống được thiết kế theo mô hình kiến trúc 3 tầng chuẩn 
 ##  Hướng dẫn Build & Flash
 
 ### 1. Chuẩn bị môi trường Biên dịch chéo (Cross-compile)
-Hệ thống yêu cầu cài đặt Toolchain biên dịch chéo dành cho BeagleBone Black trong Buildroot:
-* **Đường dẫn compiler**: `/home/son/buildroot2/output/host/bin/arm-buildroot-linux-gnueabihf-`
-* **Đường dẫn mã nguồn Kernel**: `/home/son/buildroot2/output/build/linux-custom`
+Hệ thống sử dụng Toolchain biên dịch chéo từ Buildroot. Hãy trỏ đường dẫn tới thư mục Buildroot của bạn:
+* **Đường dẫn cài đặt Buildroot**: Mặc định trong Makefile cấu hình biến `BUILDROOT_DIR ?= /path/to/buildroot` (Ví dụ: `/home/son/buildroot2`).
+* **Đường dẫn compiler**: `<BUILDROOT_DIR>/output/host/bin/arm-buildroot-linux-gnueabihf-`
+* **Đường dẫn mã nguồn Kernel**: `<BUILDROOT_DIR>/output/build/linux-custom`
 
 ### 2. Biên dịch mã nguồn
 Thực hiện biên dịch trên máy Host (PC phát triển):
@@ -74,7 +75,7 @@ Kết nối BeagleBone Black với PC qua cáp USB hoặc mạng LAN. Giả sử
    ```
 2. Copy script tự động chạy khi khởi động hệ thống nhúng lên thư mục init.d của board:
    ```bash
-   scp S99smartlamp root@192.168.7.2:/etc/init.d/
+   scp scripts/S99smartlamp root@192.168.7.2:/etc/init.d/
    ```
 
 ### 4. Khởi chạy trên Board BeagleBone Black

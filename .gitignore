@@ -26,3 +26,4 @@ obj/
 sd_backup/
 test_oled.c
 *.tar.gz
+*.docx

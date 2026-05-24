@@ -31,6 +31,10 @@ Hệ thống phần cứng bao gồm các linh kiện chính sau:
 
 Hệ thống được thiết kế theo mô hình kiến trúc 3 tầng chuẩn cho các hệ thống nhúng Linux:
 
+| Sơ đồ khối hệ thống (Trang 1) | Sơ đồ khối hệ thống (Trang 2) |
+|:---:|:---:|
+| ![Sơ đồ kiến trúc phần cứng - Trang 1](docs/images/hardware_architecture.png) | ![Sơ đồ kiến trúc phần cứng - Trang 2](docs/images/hardware_architecture-2.png) |
+
 ```mermaid
 graph TD
     subgraph Userspace ["Tầng Userspace (Ứng dụng chính)"]

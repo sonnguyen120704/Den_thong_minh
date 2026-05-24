@@ -4,7 +4,7 @@ Hệ thống **Đèn thông minh (Smart Lamp)** chạy trên nền tảng **Beag
 
 ---
 
-##  Ảnh / GIF Demo
+##  Ảnh Demo
 
 | Màn hình OLED SH1106 (Trạng thái thực tế) | Web Dashboard (Giao diện giám sát từ xa) |
 |:---:|:---:|

@@ -4,10 +4,7 @@ Hệ thống **Đèn thông minh (Smart Lamp)** chạy trên nền tảng **Beag
 
 ---
 
-## 📷 Ảnh / GIF Demo
-
-> [!NOTE]  
-> Các file ảnh/gif demo được lưu trong thư mục `docs/images/`. Nếu bạn clone dự án về, vui lòng bổ sung ảnh tương ứng vào thư mục này.
+##  Ảnh / GIF Demo
 
 | Màn hình OLED SH1106 (Trạng thái thực tế) | Web Dashboard (Giao diện giám sát từ xa) |
 |:---:|:---:|
@@ -15,7 +12,7 @@ Hệ thống **Đèn thông minh (Smart Lamp)** chạy trên nền tảng **Beag
 
 ---
 
-## 🛠️ Danh sách phần cứng
+##  Danh sách phần cứng
 
 Hệ thống phần cứng bao gồm các linh kiện chính sau:
 1. **BeagleBone Black (BBB)**: Bo mạch vi xử lý ARM Cortex-A8 (AM335x) đóng vai trò trung tâm xử lý dữ liệu và chạy nhân Linux.
@@ -27,7 +24,7 @@ Hệ thống phần cứng bao gồm các linh kiện chính sau:
 
 ---
 
-## 📐 Sơ đồ kiến trúc hệ thống
+##  Sơ đồ kiến trúc hệ thống
 
 Hệ thống được thiết kế theo mô hình kiến trúc 3 tầng chuẩn cho các hệ thống nhúng Linux:
 
@@ -44,7 +41,7 @@ Hệ thống được thiết kế theo mô hình kiến trúc 3 tầng chuẩn 
 
 ---
 
-## 🚀 Hướng dẫn Build & Flash
+##  Hướng dẫn Build & Flash
 
 ### 1. Chuẩn bị môi trường Biên dịch chéo (Cross-compile)
 Hệ thống yêu cầu cài đặt Toolchain biên dịch chéo dành cho BeagleBone Black trong Buildroot:
@@ -99,7 +96,7 @@ chmod +x /etc/init.d/S99smartlamp
 
 ---
 
-## 🌐 API Web Dashboard (Port 8080)
+##  API Web Dashboard (Port 8080)
 
 Ứng dụng chính của hệ thống cung cấp 3 API HTTP dạng RESTful thô để Web Dashboard truy xuất dữ liệu:
 
@@ -143,15 +140,14 @@ chmod +x /etc/init.d/S99smartlamp
 
 ---
 
-## 👥 Thành viên nhóm thực hiện
+## Thành viên nhóm thực hiện
 
 Dự án được thực hiện bởi nhóm sinh viên sau:
 
-1. **Nguyễn Hoài Sơn** - **MSV: B21DCCN001** (Nhóm trưởng)
-   * *Nhiệm vụ*: Lập trình Driver ngắt PIR & Driver PWM platform; Thiết kế sơ đồ phần cứng; Cấu hình bản build Linux Buildroot.
-2. **[Họ và tên Thành viên 2]** - **MSV: [Mã sinh viên 2]**
-   * *Nhiệm vụ*: Lập trình các Driver I2C (Cảm biến ánh sáng BH1750 & Mạch thời gian thực DS3231); Biên soạn tài liệu kỹ thuật.
-3. **[Họ và tên Thành viên 3]** - **MSV: [Mã sinh viên 3]**
-   * *Nhiệm vụ*: Lập trình Driver SPI điều khiển màn hình OLED SH1106; Thiết kế mạch nguyên lý nguyên mẫu phần cứng.
-4. **[Họ và tên Thành viên 4]** - **MSV: [Mã sinh viên 4]**
-   * *Nhiệm vụ*: Thiết kế Web Dashboard giám sát; Phát triển Module Web Server HTTP Socket trong C; Tích hợp API và kiểm thử hệ thống.
+1. **Nguyễn Hữu Sơn** - **MSV: B22DCDT270** (Nhóm trưởng)
+
+2. **Lương Công Thắng** - **MSV: B22DCDT306**
+   
+3. **Đỗ Đức Thuận** - **MSV: B22DCDT310**
+  
+4. **Trịnh Quang Huy** - **MSV: B22DCDT142**

@@ -1,10 +1,5 @@
 # Smart Lamp System - BeagleBone Black & Embedded Linux
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![License](https://img.shields.io/badge/license-GPL--2.0-blue.svg)]()
-[![Platform](https://img.shields.io/badge/platform-BeagleBone%20Black-orange.svg)]()
-[![OS](https://img.shields.io/badge/OS-Buildroot%20Linux-red.svg)]()
-
 Hệ thống **Đèn thông minh (Smart Lamp)** chạy trên nền tảng **BeagleBone Black** sử dụng hệ điều hành Linux nhúng tùy biến được xây dựng thông qua **Buildroot**. Dự án tích hợp các cảm biến môi trường (ánh sáng, chuyển động), màn hình hiển thị OLED, mạch thời gian thực RTC và điều khiển đèn LED thông qua cơ chế PWM để tối ưu hóa năng lượng dựa trên sự hiện diện của con người và độ sáng môi trường.
 
 ---

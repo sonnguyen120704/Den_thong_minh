@@ -23,3 +23,6 @@ obj/
 *.log
 *.swp
 *~
+docs/images/
+sd_backup/
+test_oled.c

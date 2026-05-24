@@ -31,59 +31,8 @@ Hệ thống phần cứng bao gồm các linh kiện chính sau:
 
 Hệ thống được thiết kế theo mô hình kiến trúc 3 tầng chuẩn cho các hệ thống nhúng Linux:
 
-| Sơ đồ khối hệ thống (Trang 1) | Sơ đồ khối hệ thống (Trang 2) |
-|:---:|:---:|
-| ![Sơ đồ kiến trúc phần cứng - Trang 1](docs/images/hardware_architecture.png) | ![Sơ đồ kiến trúc phần cứng - Trang 2](docs/images/hardware_architecture-2.png) |
+![Sơ đồ kiến trúc tổng thể](docs/images/so_do_khoi.png)
 
-```mermaid
-graph TD
-    subgraph Userspace ["Tầng Userspace (Ứng dụng chính)"]
-        App["smart_lamp (C Application)"]
-        Web["Web Dashboard (HTTP Port 8080)"]
-        App <-->|API Endpoints| Web
-        
-        Thread1["Thread 1: Đọc Cảm Biến"] -->|Cập nhật state| App
-        Thread2["Thread 2: Xử Lý Logic & Fading"] -->|Điều khiển & Log| App
-        Thread3["Thread 3: Web Server"] -->|Giao tiếp HTTP| App
-        Thread4["Thread 4: Hiển Thị OLED"] -->|Vẽ Framebuffer| App
-    end
-
-    subgraph Kernel ["Tầng Kernel Space (Drivers)"]
-        bh_drv["bh1750_driver.ko (/dev/bh1750)"]
-        ds_drv["ds3231_driver.ko (/dev/myds3231)"]
-        pir_drv["pir_driver.ko (/dev/mypir)"]
-        sh_drv["sh1106_spi_driver.ko (/dev/myoled)"]
-        pwm_drv["pwm_driver.ko (/sys/class/smart_lamp/led/brightness)"]
-    end
-
-    subgraph Hardware ["Tầng Phần Cứng (Physical Devices)"]
-        BH["Cảm biến BH1750 (I2C Address 0x23)"]
-        DS["Mạch RTC DS3231 (I2C Address 0x68)"]
-        PIR["Cảm biến PIR (GPIO 60 - Chân P9_12)"]
-        OLED["Màn hình OLED SH1106 (SPI Bus)"]
-        LED["Đèn LED PWM (Chân P9_22)"]
-    end
-
-    %% Tương tác giữa các tầng
-    Thread1 -.->|Read| bh_drv
-    Thread1 -.->|Read| ds_drv
-    Thread2 -.->|Write Brightness| pwm_drv
-    Thread2 -.->|Read ISR State| pir_drv
-    Thread4 -.->|Write FB 1024B| sh_drv
-
-    bh_drv ====>|I2C Master| BH
-    ds_drv ====>|I2C Master| DS
-    pir_drv ====>|GPIO Interrupts| PIR
-    sh_drv ====>|SPI Tx Only| OLED
-    pwm_drv ====>|PWM Duty Cycle| LED
-
-    classDef user fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef kernel fill:#efebe9,stroke:#4e342e,stroke-width:2px;
-    classDef hw fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
-    class Userspace,App,Web,Thread1,Thread2,Thread3,Thread4 user;
-    class Kernel,bh_drv,ds_drv,pir_drv,sh_drv,pwm_drv kernel;
-    class Hardware,BH,DS,PIR,OLED,LED hw;
-```
 
 ### Chi tiết hoạt động các tầng:
 1. **Tầng Phần cứng (Hardware)**: Kết nối các cảm biến vật lý trực tiếp với các chân IO tương ứng trên BeagleBone Black.

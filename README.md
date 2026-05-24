@@ -11,7 +11,7 @@ Hệ thống **Đèn thông minh (Smart Lamp)** chạy trên nền tảng **Beag
 
 | Màn hình OLED SH1106 (Trạng thái thực tế) | Web Dashboard (Giao diện giám sát từ xa) |
 |:---:|:---:|
-| ![Màn hình OLED SH1106](docs/images/oled_demo.jpg) | ![Web Dashboard](docs/images/web_dashboard.png) |
+| ![Màn hình OLED SH1106](docs/images/oled_demo.png) | ![Web Dashboard](docs/images/web_dashboard.png) |
 
 ---
 
